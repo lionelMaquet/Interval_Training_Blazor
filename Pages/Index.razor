@@ -1,0 +1,323 @@
+﻿@page "/"
+
+<h1>@CurrentPhaseTitle</h1>
+
+<div class="StepsAndRepsContainer">
+
+    @for (int i = 0; i < @CurrentPhaseSteps.Count; i++)
+    {
+
+        int iCopy = i; // https://stackoverflow.com/questions/56425558/blazor-variable-argument-passing-to-onclick-function/56426146#56426146
+
+        if (i != 0)
+        {
+            <div class="rep">
+                <p>X </p>
+                <input type="number" value="@CurrentPhaseStepReps[i - 1].reps" @onchange="@(e => CurrentPhaseStepReps[iCopy - 1].reps = int.Parse(e.Value.ToString()))" />
+            </div>
+        }
+
+        <div class="step">
+            <div class="stepTime">
+                <input type="number" value="@CurrentPhaseSteps[i].CurrentMinutes" @onchange="@(e => CurrentPhaseSteps[iCopy].CurrentMinutes = int.Parse(e.Value.ToString()))" />
+                <p> min</p>
+            </div>
+            <div class="stepSpeed">
+                <input type="number" value="@CurrentPhaseSteps[i].CurrentSpeed" @onchange="@(e => CurrentPhaseSteps[iCopy].CurrentSpeed = int.Parse(e.Value.ToString()))" />
+                <p> km/h</p>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="phaseInfos">
+    <p><strong>Current phase : </strong> </p>
+    <p>@CurrentPhaseTime.ToString() minutes</p>
+    <p>@Math.Round(CurrentPhaseDistance, 2).ToString() kms</p>
+</div>
+
+<div class="phaseInfos">
+    <p><strong>Total : </strong> </p>
+    <p>@TotalTime.ToString() minutes</p>
+    <p>@Math.Round(TotalDistance, 2).ToString() kms </p>
+</div>
+
+
+<div class="buttons">
+    <button @onclick="PreviousPhase">Previous Phase</button>
+    <button @onclick="AddStep">Add Step</button>
+    <button @onclick="NextPhase">Next Phase</button>
+</div>
+
+
+@code {
+
+
+
+    int phase = 0; // 0 warmup - 1 training - 2 cooling
+
+
+    string CurrentPhaseTitle
+    {
+        get
+        {
+            switch (phase)
+            {
+                case 0:
+                    return "Warmup phase";
+                case 1:
+                    return "Training phase";
+                case 2:
+                    return "Cooling phase";
+                default:
+                    return "";
+            }
+        }
+    }
+
+    int TotalTime
+    {
+        get
+        {
+            return WarmupTime + TrainingTime + CoolingTime ;
+        }
+    }
+    Double TotalDistance
+    {
+        get
+        {
+            return WarmupDistance + TrainingDistance + CoolingDistance;
+        }
+    }
+
+    List<Step> WarmupSteps = new List<Step>() { new Step() };
+    List<StepRep> WarmupStepReps = new List<StepRep>() { };
+    int WarmupTime
+    {
+        get
+        {
+
+
+            if (WarmupSteps.Count == 1 || WarmupStepReps.Count == 0)
+            {
+                return WarmupSteps[0].CurrentMinutes;
+            }
+
+            int total = WarmupSteps[0].CurrentMinutes * WarmupStepReps[0].reps;
+
+            for (int i = 1; i < WarmupSteps.Count; i++)
+            {
+                total += WarmupSteps[i].CurrentMinutes * WarmupStepReps[i - 1].reps;
+            }
+            return total;
+
+        }
+    }
+    Double WarmupDistance
+    {
+        get
+        {
+            if (WarmupSteps.Count == 1 || WarmupStepReps.Count == 0)
+            {
+                return ((double) WarmupSteps[0].CurrentSpeed/60.0) * WarmupSteps[0].CurrentMinutes ;
+            }
+
+            Double total = (double) ((double)(WarmupSteps[0].CurrentSpeed/60.0) * (double) WarmupSteps[0].CurrentMinutes) *  (double) WarmupStepReps[0].reps;
+
+            for (int i = 1; i < WarmupSteps.Count; i++)
+            {
+                total += (double) ((double)( WarmupSteps[i].CurrentSpeed/ 60.0) * (double) WarmupSteps[i].CurrentMinutes) * (double) WarmupStepReps[i - 1].reps;
+            }
+            return total;
+        }
+    }
+
+    List<Step> TrainingSteps = new List<Step>() { new Step() };
+    List<StepRep> TrainingStepReps = new List<StepRep>() { };
+    int TrainingTime
+    {
+        get
+        {
+            if (TrainingSteps.Count == 1 || TrainingStepReps.Count == 0)
+            {
+                return TrainingSteps[0].CurrentMinutes;
+            }
+
+            int total = TrainingSteps[0].CurrentMinutes * TrainingStepReps[0].reps;
+
+            for (int i = 1; i < TrainingSteps.Count; i++)
+            {
+                total += TrainingSteps[i].CurrentMinutes * TrainingStepReps[i - 1].reps;
+            }
+            return total;
+        }
+    }
+    Double TrainingDistance
+    {
+        get
+        {
+            if (TrainingSteps.Count == 1 || TrainingStepReps.Count == 0)
+            {
+                return ((double)TrainingSteps[0].CurrentSpeed / 60.0) * TrainingSteps[0].CurrentMinutes;
+            }
+
+            Double total = (double) ((double)(TrainingSteps[0].CurrentSpeed / 60.0) * (double) TrainingSteps[0].CurrentMinutes) * (double) TrainingStepReps[0].reps;
+
+            for (int i = 1; i < TrainingSteps.Count; i++)
+            {
+                total += (double) ((double)(TrainingSteps[i].CurrentSpeed / 60.0) * (double) TrainingSteps[i].CurrentMinutes) * (double) TrainingStepReps[i - 1].reps;
+            }
+            return total;
+        }
+    }
+
+    List<Step> CoolingSteps = new List<Step>() { new Step() };
+    List<StepRep> CoolingStepReps = new List<StepRep>() { };
+    int CoolingTime
+    {
+        get
+        {
+            if (CoolingSteps.Count == 1 || CoolingStepReps.Count == 0)
+            {
+                return CoolingSteps[0].CurrentMinutes;
+            }
+
+            int total = CoolingSteps[0].CurrentMinutes * CoolingStepReps[0].reps;
+
+            for (int i = 1; i < CoolingSteps.Count; i++)
+            {
+                total += CoolingSteps[i].CurrentMinutes * CoolingStepReps[i - 1].reps;
+            }
+            return total;
+        }
+    }
+    Double CoolingDistance
+    {
+        get
+        {
+            if (CoolingSteps.Count == 1 || CoolingStepReps.Count == 0)
+            {
+                return ((double)CoolingSteps[0].CurrentSpeed / 60.0) * CoolingSteps[0].CurrentMinutes;
+            }
+
+            Double total = (double)((double)(CoolingSteps[0].CurrentSpeed / 60.0) * (double) CoolingSteps[0].CurrentMinutes) * (double) CoolingStepReps[0].reps;
+
+            for (int i = 1; i < CoolingSteps.Count; i++)
+            {
+                total += (double) ((double)(CoolingSteps[i].CurrentSpeed / 60.0) * (double) CoolingSteps[i].CurrentMinutes) * (double) CoolingStepReps[i - 1].reps;
+            }
+            return total;
+        }
+    }
+
+    List<Step> CurrentPhaseSteps
+    {
+        get
+        {
+            switch (phase)
+            {
+                case 0:
+                    return WarmupSteps;
+                case 1:
+                    return TrainingSteps;
+                case 2:
+                    return CoolingSteps;
+                default:
+                    return WarmupSteps;
+            }
+        }
+    }
+    List<StepRep> CurrentPhaseStepReps
+    {
+        get
+        {
+            switch (phase)
+            {
+                case 0:
+                    return WarmupStepReps;
+                case 1:
+                    return TrainingStepReps;
+                case 2:
+                    return CoolingStepReps;
+                default:
+                    return WarmupStepReps;
+            }
+        }
+    }
+    int CurrentPhaseTime
+    {
+        get
+        {
+            switch (phase)
+            {
+                case 0:
+                    return WarmupTime;
+                case 1:
+                    return TrainingTime;
+                case 2:
+                    return CoolingTime;
+                default:
+                    return WarmupTime;
+            }
+        }
+    }
+    Double CurrentPhaseDistance
+    {
+        get
+        {
+            switch (phase)
+            {
+                case 0:
+                    return WarmupDistance;
+                case 1:
+                    return TrainingDistance;
+                case 2:
+                    return CoolingDistance;
+                default:
+                    return WarmupDistance;
+            }
+        }
+    }
+
+    private void AddStep()
+    {
+
+        switch (phase)
+        {
+            case 0:
+                WarmupSteps.Add(new Step());
+                WarmupStepReps.Add(new StepRep());
+                break;
+            case 1:
+                TrainingSteps.Add(new Step());
+                TrainingStepReps.Add(new StepRep());
+                break;
+            case 2:
+                CoolingSteps.Add(new Step());
+                CoolingStepReps.Add(new StepRep());
+                break;
+            default:
+                break;
+        }
+
+    }
+    private void PreviousPhase()
+    {
+        if (phase != 0)
+        {
+            phase--;
+        }
+    }
+    private void NextPhase()
+    {
+        if (phase != 3)
+        {
+            phase++;
+        }
+    }
+
+    private void StartTraining() { }
+
+}
+
+
