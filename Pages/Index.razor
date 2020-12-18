@@ -2,61 +2,117 @@
 
 <h1>@CurrentPhaseTitle</h1>
 
-<div class="StepsAndRepsContainer">
+@if (phase < 3)
+{
 
-    @for (int i = 0; i < @CurrentPhaseSteps.Count; i++)
-    {
+    <div class="StepsAndRepsContainer">
 
-        int iCopy = i; // https://stackoverflow.com/questions/56425558/blazor-variable-argument-passing-to-onclick-function/56426146#56426146
-
-        if (i != 0)
+        @for (int i = 0; i < @CurrentPhaseSteps.Count; i++)
         {
-            <div class="rep">
-                <p>X </p>
-                <input type="number" value="@CurrentPhaseStepReps[i - 1].reps" @onchange="@(e => CurrentPhaseStepReps[iCopy - 1].reps = int.Parse(e.Value.ToString()))" />
+
+            int iCopy = i; // https://stackoverflow.com/questions/56425558/blazor-variable-argument-passing-to-onclick-function/56426146#56426146
+
+            if (i != 0)
+            {
+                <div class="rep">
+                    <p>X </p>
+                    <input type="number" value="@CurrentPhaseStepReps[i - 1].reps" @onchange="@(e => CurrentPhaseStepReps[iCopy - 1].reps = int.Parse(e.Value.ToString()))" />
+                </div>
+            }
+
+            <div class="step">
+                <div class="stepTime">
+                    <input type="number" value="@CurrentPhaseSteps[i].CurrentMinutes" @onchange="@(e => CurrentPhaseSteps[iCopy].CurrentMinutes = int.Parse(e.Value.ToString()))" />
+                    <p> min</p>
+                </div>
+                <div class="stepSpeed">
+                    <input type="number" value="@CurrentPhaseSteps[i].CurrentSpeed" @onchange="@(e => CurrentPhaseSteps[iCopy].CurrentSpeed = int.Parse(e.Value.ToString()))" />
+                    <p> km/h</p>
+                </div>
             </div>
         }
+    </div>
 
-        <div class="step">
-            <div class="stepTime">
-                <input type="number" value="@CurrentPhaseSteps[i].CurrentMinutes" @onchange="@(e => CurrentPhaseSteps[iCopy].CurrentMinutes = int.Parse(e.Value.ToString()))" />
-                <p> min</p>
-            </div>
-            <div class="stepSpeed">
-                <input type="number" value="@CurrentPhaseSteps[i].CurrentSpeed" @onchange="@(e => CurrentPhaseSteps[iCopy].CurrentSpeed = int.Parse(e.Value.ToString()))" />
-                <p> km/h</p>
-            </div>
-        </div>
-    }
-</div>
+    <div class="phaseInfos">
+        <p><strong>Current phase : </strong> </p>
+        <p>@CurrentPhaseTime.ToString() minutes</p>
+        <p>@Math.Round(CurrentPhaseDistance, 2).ToString() kms</p>
+    </div>
 
-<div class="phaseInfos">
-    <p><strong>Current phase : </strong> </p>
-    <p>@CurrentPhaseTime.ToString() minutes</p>
-    <p>@Math.Round(CurrentPhaseDistance, 2).ToString() kms</p>
-</div>
+    <div class="phaseInfos">
+        <p><strong>Total : </strong> </p>
+        <p>@TotalTime.ToString() minutes</p>
+        <p>@Math.Round(TotalDistance, 2).ToString() kms </p>
+    </div>
 
-<div class="phaseInfos">
-    <p><strong>Total : </strong> </p>
-    <p>@TotalTime.ToString() minutes</p>
-    <p>@Math.Round(TotalDistance, 2).ToString() kms </p>
-</div>
+    <div class="buttons">
+        <button @onclick="PreviousPhase">Previous Phase</button>
+        <button @onclick="AddStep">Add Step</button>
+        <button @onclick="NextPhase">Next Phase</button>
+    </div>
+
+}
+
+else if (phase == 3)
+{
+
+    <div class="timer">
+        <p>@CurrentStepTimerDisplayString</p>
+        <p>@CurrentStepSpeed km/h</p>
+        <p></p>
+        <p>@NextStepTimerDisplayString</p>
+        <p>@NextStepSpeed km/h</p>
+    </div>
 
 
-<div class="buttons">
-    <button @onclick="PreviousPhase">Previous Phase</button>
-    <button @onclick="AddStep">Add Step</button>
-    <button @onclick="NextPhase">Next Phase</button>
-</div>
+    <div class="buttons">
+        <button @onclick="PreviousPhase">Back</button>
+        <button @onclick="StartStop">@(aTimer.Enabled ? "Stop" : "Start")</button>
+        <button @onclick="ResetTimer">Reset</button>
+    </div>
+}
+
+else if (phase == 4)
+{
+    <button @onclick="PreviousPhase">Back</button>
+}
+
+
+
 
 
 @code {
 
+    // All infos needed for displaying timer 
+    int CurrentStepIndex = -1;
+    int CurrentStepSeconds;
+    int CurrentStepSpeed;
+    int NextStepSeconds;
+    int NextStepSpeed;
+    string CurrentStepTimerDisplayString
+    {
+        get
+        {
+            TimeSpan time = TimeSpan.FromSeconds(CurrentStepSeconds);
 
+            //here backslash is must to tell that colon is
+            //not the part of format, it just a character that we want in output
+            return time.ToString(@"mm\:ss");
+        }
+    }
+    string NextStepTimerDisplayString
+    {
+        get
+        {
+            TimeSpan time = TimeSpan.FromSeconds(NextStepSeconds);
 
-    int phase = 0; // 0 warmup - 1 training - 2 cooling
+            //here backslash is must to tell that colon is
+            //not the part of format, it just a character that we want in output
+            return time.ToString(@"mm\:ss");
+        }
+    }
 
-
+    int phase = 0; // 0 warmup - 1 training - 2 cooling - 3 IN PROGRESS - 4 Training complete
     string CurrentPhaseTitle
     {
         get
@@ -69,6 +125,10 @@
                     return "Training phase";
                 case 2:
                     return "Cooling phase";
+                case 3:
+                    return "IN PROGRESS";
+                case 4:
+                    return "It's over. Well done.";
                 default:
                     return "";
             }
@@ -79,7 +139,7 @@
     {
         get
         {
-            return WarmupTime + TrainingTime + CoolingTime ;
+            return WarmupTime + TrainingTime + CoolingTime;
         }
     }
     Double TotalDistance
@@ -87,6 +147,70 @@
         get
         {
             return WarmupDistance + TrainingDistance + CoolingDistance;
+        }
+    }
+    List<Step> AllSteps
+    {
+        get
+        {
+            List<Step> warmupSteps = new List<Step>();
+            List<Step> trainingSteps = new List<Step>();
+            List<Step> coolingSteps = new List<Step>();
+            List<Step> allSteps = new List<Step>();
+
+            allSteps.Add(WarmupSteps[0]);
+
+            for (int i = 1; i < WarmupSteps.Count; i++)
+            {
+                int currentCounter = WarmupStepReps[i - 1].reps;
+                while (currentCounter != 0)
+                {
+                    allSteps.Add(WarmupSteps[i]);
+                    currentCounter--;
+
+                    if (currentCounter != 0)
+                    {
+                        allSteps.Add(WarmupSteps[i - 1]);
+                    }
+                }
+            } // add all warmup steps
+
+            allSteps.Add(TrainingSteps[0]);
+
+            for (int i = 1; i < TrainingSteps.Count; i++)
+            {
+                int currentCounter = TrainingStepReps[i - 1].reps;
+                while (currentCounter != 0)
+                {
+                    allSteps.Add(TrainingSteps[i]);
+                    currentCounter--;
+
+                    if (currentCounter != 0)
+                    {
+                        allSteps.Add(TrainingSteps[i - 1]);
+                    }
+                }
+            } // add all training steps
+
+            allSteps.Add(CoolingSteps[0]);
+
+            for (int i = 1; i < CoolingSteps.Count; i++)
+            {
+                int currentCounter = CoolingStepReps[i - 1].reps;
+                while (currentCounter != 0)
+                {
+                    allSteps.Add(CoolingSteps[i]);
+                    currentCounter--;
+
+                    if (currentCounter != 0)
+                    {
+                        allSteps.Add(CoolingSteps[i - 1]);
+                    }
+                }
+            } // add all cooling steps
+
+            return allSteps;
+
         }
     }
 
@@ -119,14 +243,14 @@
         {
             if (WarmupSteps.Count == 1 || WarmupStepReps.Count == 0)
             {
-                return ((double) WarmupSteps[0].CurrentSpeed/60.0) * WarmupSteps[0].CurrentMinutes ;
+                return ((double)WarmupSteps[0].CurrentSpeed / 60.0) * WarmupSteps[0].CurrentMinutes;
             }
 
-            Double total = (double) ((double)(WarmupSteps[0].CurrentSpeed/60.0) * (double) WarmupSteps[0].CurrentMinutes) *  (double) WarmupStepReps[0].reps;
+            Double total = (double)((double)(WarmupSteps[0].CurrentSpeed / 60.0) * (double)WarmupSteps[0].CurrentMinutes) * (double)WarmupStepReps[0].reps;
 
             for (int i = 1; i < WarmupSteps.Count; i++)
             {
-                total += (double) ((double)( WarmupSteps[i].CurrentSpeed/ 60.0) * (double) WarmupSteps[i].CurrentMinutes) * (double) WarmupStepReps[i - 1].reps;
+                total += (double)((double)(WarmupSteps[i].CurrentSpeed / 60.0) * (double)WarmupSteps[i].CurrentMinutes) * (double)WarmupStepReps[i - 1].reps;
             }
             return total;
         }
@@ -161,11 +285,11 @@
                 return ((double)TrainingSteps[0].CurrentSpeed / 60.0) * TrainingSteps[0].CurrentMinutes;
             }
 
-            Double total = (double) ((double)(TrainingSteps[0].CurrentSpeed / 60.0) * (double) TrainingSteps[0].CurrentMinutes) * (double) TrainingStepReps[0].reps;
+            Double total = (double)((double)(TrainingSteps[0].CurrentSpeed / 60.0) * (double)TrainingSteps[0].CurrentMinutes) * (double)TrainingStepReps[0].reps;
 
             for (int i = 1; i < TrainingSteps.Count; i++)
             {
-                total += (double) ((double)(TrainingSteps[i].CurrentSpeed / 60.0) * (double) TrainingSteps[i].CurrentMinutes) * (double) TrainingStepReps[i - 1].reps;
+                total += (double)((double)(TrainingSteps[i].CurrentSpeed / 60.0) * (double)TrainingSteps[i].CurrentMinutes) * (double)TrainingStepReps[i - 1].reps;
             }
             return total;
         }
@@ -200,11 +324,11 @@
                 return ((double)CoolingSteps[0].CurrentSpeed / 60.0) * CoolingSteps[0].CurrentMinutes;
             }
 
-            Double total = (double)((double)(CoolingSteps[0].CurrentSpeed / 60.0) * (double) CoolingSteps[0].CurrentMinutes) * (double) CoolingStepReps[0].reps;
+            Double total = (double)((double)(CoolingSteps[0].CurrentSpeed / 60.0) * (double)CoolingSteps[0].CurrentMinutes) * (double)CoolingStepReps[0].reps;
 
             for (int i = 1; i < CoolingSteps.Count; i++)
             {
-                total += (double) ((double)(CoolingSteps[i].CurrentSpeed / 60.0) * (double) CoolingSteps[i].CurrentMinutes) * (double) CoolingStepReps[i - 1].reps;
+                total += (double)((double)(CoolingSteps[i].CurrentSpeed / 60.0) * (double)CoolingSteps[i].CurrentMinutes) * (double)CoolingStepReps[i - 1].reps;
             }
             return total;
         }
@@ -310,13 +434,87 @@
     }
     private void NextPhase()
     {
-        if (phase != 3)
+        if (phase != 4)
         {
             phase++;
         }
     }
 
-    private void StartTraining() { }
+    // Timer creation, initialization and updates
+    System.Timers.Timer aTimer = new System.Timers.Timer();
+    protected override void OnInitialized()
+    {
+        aTimer.Elapsed += new ElapsedEventHandler(UpdateTimer);
+        aTimer.Interval = 1000;
+
+    }
+    bool TimerIsOver = false;
+    private void StartStop()
+    {
+
+        if (TimerIsOver)
+        {
+            TimerIsOver = false;
+            ResetTimer();
+            aTimer.Enabled = true;
+            this.StateHasChanged();
+        }
+        else
+        {
+            aTimer.Enabled = !aTimer.Enabled;
+            this.StateHasChanged();
+        }
+
+    }
+    private void ResetTimer()
+    {
+        CurrentStepIndex = 0;
+        CurrentStepSeconds = AllSteps[0].CurrentMinutes * 60;
+        CurrentStepSpeed = AllSteps[0].CurrentSpeed;
+
+        NextStepSeconds = AllSteps[1].CurrentMinutes * 60;
+        NextStepSpeed = AllSteps[1].CurrentSpeed;
+    }
+    private void UpdateTimer(object source, ElapsedEventArgs e)
+    {
+        if (CurrentStepIndex == -1) // initialize
+        {
+            ResetTimer();
+        }
+
+        else
+        {
+            if (CurrentStepSeconds == 0)
+            {
+
+                if (CurrentStepIndex == AllSteps.Count - 1)
+                {
+                    TimerIsOver = true;
+                    phase++;
+                    aTimer.Enabled = !aTimer.Enabled;
+                    this.StateHasChanged();
+
+                } else
+                {
+                    CurrentStepIndex++;
+                    CurrentStepSeconds = AllSteps[CurrentStepIndex].CurrentMinutes * 60;
+                    CurrentStepSpeed = AllSteps[CurrentStepIndex].CurrentSpeed;
+
+                    NextStepSeconds = AllSteps[CurrentStepIndex + 1].CurrentMinutes * 60;
+                    NextStepSpeed = AllSteps[CurrentStepIndex + 1].CurrentSpeed;
+                }
+
+
+            }
+
+            else
+            {
+                CurrentStepSeconds--;
+            }
+        }
+
+        this.StateHasChanged();
+    }
 
 }
 

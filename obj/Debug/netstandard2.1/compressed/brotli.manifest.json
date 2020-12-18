@@ -1,7 +1,7 @@
 {
   "FilesToCompress": [
     {
-      "InputSource": "obj\\Debug\\netstandard2.1\\integrity\\qqUAueLYM10D4I0BtPdh2Qw5R04KK9-2q6xR6hBegVk=.hash",
+      "InputSource": "obj\\Debug\\netstandard2.1\\integrity\\INLOh9jfw0ee-6bagdPWchTY2sPzE2lsTY1GPruNn8c=.hash",
       "Source": "C:\\Users\\lione\\Desktop\\Side Projects\\Interval_Training\\obj\\Debug\\netstandard2.1\\blazor\\unlinked\\Interval_Training.dll",
       "Target": "obj\\Debug\\netstandard2.1\\compressed\\_framework\/_bin\/Interval_Training.dll.br"
     },
@@ -256,7 +256,7 @@
       "Target": "obj\\Debug\\netstandard2.1\\compressed\\_framework\/_bin\/Microsoft.JSInterop.WebAssembly.dll.br"
     },
     {
-      "InputSource": "obj\\Debug\\netstandard2.1\\integrity\\QjyZB2tdPncCP24sb4XE3UYPLyva2gTzhQ-fZZyIPcU=.hash",
+      "InputSource": "obj\\Debug\\netstandard2.1\\integrity\\4qMW9j2boc374QF9NXIYqHDYBDSHNsqppUp-h3BzVs8=.hash",
       "Source": "C:\\Users\\lione\\Desktop\\Side Projects\\Interval_Training\\obj\\Debug\\netstandard2.1\\blazor\\unlinked\\Interval_Training.pdb",
       "Target": "obj\\Debug\\netstandard2.1\\compressed\\_framework\/_bin\/Interval_Training.pdb.br"
     },
@@ -281,7 +281,7 @@
       "Target": "obj\\Debug\\netstandard2.1\\compressed\\_framework\/blazor.webassembly.js.br"
     },
     {
-      "InputSource": "obj\\Debug\\netstandard2.1\\integrity\\aI5joWfMMJ_ahmJ17liVAkNEiN5_Df-2Qfrrt8vm7xY=.hash",
+      "InputSource": "obj\\Debug\\netstandard2.1\\integrity\\7mAztGEUuqfNvq0lwv0vgd_kbVMrCoXcaJAjp4F7Uew=.hash",
       "Source": "C:\\Users\\lione\\Desktop\\Side Projects\\Interval_Training\\obj\\Debug\\netstandard2.1\\blazor\\blazor.boot.json",
       "Target": "obj\\Debug\\netstandard2.1\\compressed\\_framework\/blazor.boot.json.br"
     }

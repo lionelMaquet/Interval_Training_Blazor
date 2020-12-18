@@ -72,6 +72,13 @@ using Interval_Training.Shared;
 #line default
 #line hidden
 #nullable disable
+#nullable restore
+#line 10 "C:\Users\lione\Desktop\Side Projects\Interval_Training\_Imports.razor"
+using System.Timers;
+
+#line default
+#line hidden
+#nullable disable
     public partial class MainLayout : LayoutComponentBase
     {
         #pragma warning disable 1998

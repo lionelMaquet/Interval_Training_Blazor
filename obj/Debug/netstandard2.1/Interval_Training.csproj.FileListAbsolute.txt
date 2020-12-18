@@ -341,6 +341,6 @@ C:\Users\lione\Desktop\Side Projects\Interval_Training\obj\Debug\netstandard2.1\
 C:\Users\lione\Desktop\Side Projects\Interval_Training\obj\Debug\netstandard2.1\Interval_Training.dll
 C:\Users\lione\Desktop\Side Projects\Interval_Training\obj\Debug\netstandard2.1\Interval_Training.pdb
 C:\Users\lione\Desktop\Side Projects\Interval_Training\obj\Debug\netstandard2.1\Interval_Training.csprojAssemblyReference.cache
-C:\Users\lione\Desktop\Side Projects\Interval_Training\obj\Debug\netstandard2.1\integrity\qqUAueLYM10D4I0BtPdh2Qw5R04KK9-2q6xR6hBegVk=.hash
-C:\Users\lione\Desktop\Side Projects\Interval_Training\obj\Debug\netstandard2.1\integrity\QjyZB2tdPncCP24sb4XE3UYPLyva2gTzhQ-fZZyIPcU=.hash
-C:\Users\lione\Desktop\Side Projects\Interval_Training\obj\Debug\netstandard2.1\integrity\aI5joWfMMJ_ahmJ17liVAkNEiN5_Df-2Qfrrt8vm7xY=.hash
+C:\Users\lione\Desktop\Side Projects\Interval_Training\obj\Debug\netstandard2.1\integrity\INLOh9jfw0ee-6bagdPWchTY2sPzE2lsTY1GPruNn8c=.hash
+C:\Users\lione\Desktop\Side Projects\Interval_Training\obj\Debug\netstandard2.1\integrity\4qMW9j2boc374QF9NXIYqHDYBDSHNsqppUp-h3BzVs8=.hash
+C:\Users\lione\Desktop\Side Projects\Interval_Training\obj\Debug\netstandard2.1\integrity\7mAztGEUuqfNvq0lwv0vgd_kbVMrCoXcaJAjp4F7Uew=.hash
