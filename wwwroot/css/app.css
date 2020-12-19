@@ -38,7 +38,7 @@
 
 .rep {
     display: flex;
-    align-items: flex-start;
+    align-items: baseline;
 }
 
 .phaseInfos {
@@ -52,8 +52,35 @@
 
 .buttons {
     display: flex;
+    margin-top: 20px;
 }
 
     .buttons button {
         margin : 0px 10px;
+    }
+
+input {
+    width: 60px;
+}
+
+.rep input {
+    margin-left: 10px;
+    border:none;
+    background-color: lightblue;
+}
+
+.timer .currentStep, .timer .nextStep {
+    display:flex;
+}
+
+    .timer .currentStep p, .timer .nextStep p {
+        margin: 0px 10px;
+    }
+
+    .timer .currentStep p {
+        font-size: 50px;
+    }
+
+    .timer .nextStep {
+        justify-content: center;
     }

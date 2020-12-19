@@ -22,11 +22,11 @@
 
             <div class="step">
                 <div class="stepTime">
-                    <input type="number" value="@CurrentPhaseSteps[i].CurrentMinutes" @onchange="@(e => CurrentPhaseSteps[iCopy].CurrentMinutes = int.Parse(e.Value.ToString()))" />
+                    <input class="inp" type="number" value="@CurrentPhaseSteps[i].CurrentMinutes" @onchange="@(e => CurrentPhaseSteps[iCopy].CurrentMinutes = int.Parse(e.Value.ToString()))" />
                     <p> min</p>
                 </div>
                 <div class="stepSpeed">
-                    <input type="number" value="@CurrentPhaseSteps[i].CurrentSpeed" @onchange="@(e => CurrentPhaseSteps[iCopy].CurrentSpeed = int.Parse(e.Value.ToString()))" />
+                    <input class="inp" type="number" value="@CurrentPhaseSteps[i].CurrentSpeed" @onchange="@(e => CurrentPhaseSteps[iCopy].CurrentSpeed = int.Parse(e.Value.ToString()))" />
                     <p> km/h</p>
                 </div>
             </div>
@@ -57,11 +57,15 @@ else if (phase == 3)
 {
 
     <div class="timer">
-        <p>@CurrentStepTimerDisplayString</p>
-        <p>@CurrentStepSpeed km/h</p>
-        <p></p>
-        <p>@NextStepTimerDisplayString</p>
-        <p>@NextStepSpeed km/h</p>
+        <div class="currentStep">
+            <p>@CurrentStepTimerDisplayString</p>
+            <p>@CurrentStepSpeed km/h</p>
+        </div>
+        
+        <div class="nextStep">
+            <p>@NextStepTimerDisplayString</p>
+            <p>@NextStepSpeed km/h</p>
+        </div>
     </div>
 
 
@@ -120,13 +124,13 @@ else if (phase == 4)
             switch (phase)
             {
                 case 0:
-                    return "Warmup phase";
+                    return "Warmup steps";
                 case 1:
-                    return "Training phase";
+                    return "Training steps";
                 case 2:
-                    return "Cooling phase";
+                    return "Cooling steps";
                 case 3:
-                    return "IN PROGRESS";
+                    return "Training";
                 case 4:
                     return "It's over. Well done.";
                 default:
