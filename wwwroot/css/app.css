@@ -52,25 +52,29 @@
 
 .buttons {
     display: flex;
-    margin-top: 20px;
+    margin-top: 50px;
+    align-items:center;
 }
 
     .buttons button {
         margin : 0px 10px;
+        font-family:monospace;
     }
 
 input {
     width: 60px;
+    border: none;
+    border-bottom: solid 1px lightblue;
 }
 
 .rep input {
     margin-left: 10px;
-    border:none;
-    background-color: lightblue;
+    
 }
 
 .timer .currentStep, .timer .nextStep {
-    display:flex;
+    justify-content: center;
+    display: flex;
 }
 
     .timer .currentStep p, .timer .nextStep p {
@@ -81,6 +85,67 @@ input {
         font-size: 50px;
     }
 
-    .timer .nextStep {
-        justify-content: center;
-    }
+.timer .nextStep {
+    
+    font-size: 35px;
+    color: lightsteelblue;
+}
+
+.PhaseChangeButton {
+    border: none;
+    background-color: white;
+    color: black;
+    font-size: 30px;
+    font-family: cursive;
+}
+
+.AddRemoveStepButton {
+    border:none;
+    font-weight: 600;
+    padding: 10px 10px;
+}
+
+.AddStepButton {
+    background-color: lightblue;
+}
+
+.RemoveStepButton {
+    background-color: lightcoral;
+}
+
+.ResetImg {
+    width: 30px;
+    height: 30px;
+    margin-left: 10px;
+    cursor:pointer;
+}
+
+.StartStopButton {
+    border: none;
+    padding: 10px 20px;
+    background-color: darkcyan;
+    color: white;
+    font-weight: 700;
+    font-size: 25px;
+    font-family: monospace;
+}
+
+
+.PhaseTitle {
+    text-decoration: underline;
+    color: cadetblue;
+    margin-bottom: 50px;
+}
+
+.MultiplierX {
+    font-family: cursive;
+    font-size: x-small;
+    font-weight: bold;
+    color: cadetblue;
+}
+
+.step p {
+    font-family: monospace;
+    font-size: large;
+    color: lightgrey;
+}

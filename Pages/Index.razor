@@ -1,6 +1,6 @@
 ﻿@page "/"
 
-<h1>@CurrentPhaseTitle</h1>
+<h1 class="PhaseTitle">@CurrentPhaseTitle</h1>
 
 @if (phase < 3)
 {
@@ -15,7 +15,7 @@
             if (i != 0)
             {
                 <div class="rep">
-                    <p>X </p>
+                    <p class="MultiplierX">X </p>
                     <input type="number" value="@CurrentPhaseStepReps[i - 1].reps" @onchange="@(e => CurrentPhaseStepReps[iCopy - 1].reps = int.Parse(e.Value.ToString()))" />
                 </div>
             }
@@ -35,20 +35,23 @@
 
     <div class="phaseInfos">
         <p><strong>Current phase : </strong> </p>
-        <p>@CurrentPhaseTime.ToString() minutes</p>
+        <p>@CurrentPhaseTime.ToString() minutes </p>
+        <p>-</p>
         <p>@Math.Round(CurrentPhaseDistance, 2).ToString() kms</p>
     </div>
 
     <div class="phaseInfos">
         <p><strong>Total : </strong> </p>
-        <p>@TotalTime.ToString() minutes</p>
+        <p>@TotalTime.ToString() minutes </p>
+        <p>-</p>
         <p>@Math.Round(TotalDistance, 2).ToString() kms </p>
     </div>
 
     <div class="buttons">
-        <button @onclick="PreviousPhase">Previous Phase</button>
-        <button @onclick="AddStep">Add Step</button>
-        <button @onclick="NextPhase">Next Phase</button>
+        <button @onclick="PreviousPhase" class="PhaseChangeButton"> @PreviousPhaseString </button>
+        <button @onclick="AddStep" class="AddRemoveStepButton AddStepButton">Add Step</button>
+        <button @onclick="RemoveStep" class="AddRemoveStepButton RemoveStepButton">Remove Step</button>
+        <button @onclick="NextPhase" class="PhaseChangeButton"> @NextPhaseString </button>
     </div>
 
 }
@@ -70,9 +73,9 @@ else if (phase == 3)
 
 
     <div class="buttons">
-        <button @onclick="PreviousPhase">Back</button>
-        <button @onclick="StartStop">@(aTimer.Enabled ? "Stop" : "Start")</button>
-        <button @onclick="ResetTimer">Reset</button>
+        <button @onclick="PreviousPhase" class="PhaseChangeButton">@PreviousPhaseString</button>
+        <button @onclick="StartStop" class="StartStopButton">@(aTimer.Enabled ? "Stop" : "Start")</button>
+        <img src="/assets/replay.png" @onclick="ResetTimer" class="ResetImg" />
     </div>
 }
 
@@ -86,6 +89,9 @@ else if (phase == 4)
 
 
 @code {
+
+    string PreviousPhaseString = "<";
+    string NextPhaseString = ">";
 
     // All infos needed for displaying timer 
     int CurrentStepIndex = -1;
@@ -428,6 +434,35 @@ else if (phase == 4)
                 break;
         }
 
+    }
+    private void RemoveStep()
+    {
+        switch (phase)
+        {
+            case 0:
+                if (WarmupSteps.Count != 1)
+                {
+                    WarmupSteps.RemoveAt(WarmupSteps.Count - 1);
+                    WarmupStepReps.RemoveAt(WarmupStepReps.Count - 1);
+                }
+                break;
+            case 1:
+                if (TrainingSteps.Count != 1)
+                {
+                    TrainingSteps.RemoveAt(TrainingSteps.Count - 1);
+                    TrainingStepReps.RemoveAt(TrainingStepReps.Count - 1);
+                }
+                break;
+            case 2:
+                if (CoolingSteps.Count != 1)
+                {
+                    CoolingSteps.RemoveAt(CoolingSteps.Count - 1);
+                    CoolingStepReps.RemoveAt(CoolingStepReps.Count - 1);
+                }
+                break;
+            default:
+                break;
+        }
     }
     private void PreviousPhase()
     {
